@@ -82,40 +82,44 @@ public class Stub extends Thread {
 		}
 	}
 
+	public static byte[] recvMsg(InputStream inpustream) {
+        try {
+
+            byte len[] = new byte[1024];
+            int count = inpustream.read(len); 
+            byte[] temp = new byte[count];
+            for (int i = 0; i < count; i++) { 
+                temp[i] = len[i]; 
+            } 
+            return temp;
+        } catch (Exception e) {
+            System.out.println("recvMsg() occur exception!" + e.toString());
+        }
+        return null;
+}
+
 	private void signup() throws IOException {
 		String username = menu.readString("Username: ");
 		String password = menu.readString("Password: ");
-		//String query = String.join(" ", "REGISTAR", username, password);
 		
-		AuthenticationRequest req = AuthenticationRequest.newBuilder().setUsername(username).setPassword(password).setRequest(AuthenticationRequest.RequestType.REGISTRATION).build();
-		req.writeTo(os);
+		ClientData c = ClientData.newBuilder().setUsername(username).setPassword(password).build();
+		Message req = Message.newBuilder().setType("REGISTER").setClientData(c).build();
+		byte[] result = req.toByteArray();
+		os.write(result);
 		
+
+		byte[] msg = recvMsg(is);
+		Message rep = Message.parseFrom(msg);
 		
-		AuthenticationResponse rep = AuthenticationResponse.parseFrom(is);
-		if (rep.getResponse().equals(AuthenticationResponse.ResponseType.OK)) {
+		if (rep.getResponse().getResult().equals("OK")) {
 		//	req = AuthenticationRequest.newBuilder().setUsername(username).setPassword(password).setRequest(AuthenticationRequest.RequestType.LOGIN).build();
 		//	req.writeTo(os);
 		//	rep = AuthenticationResponse.parseDelimitedFrom(is);
 			client.setLogged(true);
-			System.out.println("loggado");
-		
 		}
 
-		menu.printResponse("You are now registered");
+		menu.printResponse(rep.getResponse().getDescription());
 		
-/*
-		out.println(query);
-		String response = client.getResponse();
-
-		if (client.getReplyStatus()) {
-			query = String.join(" ", "LOGIN", username, password);
-			out.println(query);
-			response = client.getResponse();
-			client.setLogged(true);
-		}
-
-		menu.printResponse(response);
-*/
 	}
 
 	private void login() {

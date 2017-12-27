@@ -4,23 +4,22 @@ package client;
 
 option java_outer_classname = "Protocol";
 
-message AuthenticationRequest {
+message Message {
+  optional string type = 1;
+  optional ClientData clientData = 2;
+  optional Response response = 3;
+}
+
+
+message ClientData {
   optional string username = 1;
   optional string password = 2;
-  optional RequestType request = 3; 
-
-  enum RequestType {
-    REGISTRATION = 1;
-    LOGIN = 2;
-  }
 }
 
-message AuthenticationResponse {
-  optional ResponseType response = 1;
+
+message Response {
+  optional string result = 1;
   optional string description = 2;
-
-  enum ResponseType { 
-    OK = 1;
-    ERROR = 2;
-  }
 }
+
+  
