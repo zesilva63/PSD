@@ -12,6 +12,5 @@ runcli:
 clean:
 	rm client/*.class
 	rm frontend/*.beam
-	rm frontend/*.hrl
 	rm frontend/protocol.erl
 	rm client/Protocol.java

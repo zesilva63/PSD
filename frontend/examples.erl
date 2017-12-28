@@ -3,7 +3,7 @@
 % REGISTER
 
 % pedido de registo
-#{type => "REGISTER", user => #{ username => "the63x", password => "pass"}, request => undefined, response => undefined}
+encode_msg(#{type => "REGISTER", user => #{ username => "the63x", password => "pass"}, request => undefined, response => undefined}
 % resposta a registo com sucesso
 #{type => "RESPONSE", user => undefined, request => undefined, response => #{ result => "OK", description => "You are now registered!"}}
 % resposta a registo com erro user exists

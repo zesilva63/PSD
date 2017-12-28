@@ -21,11 +21,43 @@ acceptor(LSock, LoginManager) ->
 waitLogin(Sock, LoginManager) ->
     receive
         {tcp, Sock, Bin} ->
-            protocol:decode_msg(Bin,'Message'),
-            UserBin = protocol:encode_msg(#{type => "RESPONSE", user => undefined, request => undefined, response => #{ result => "OK", description => "You are now registered!"} }),
-            gen_tcp:send(Sock,UserBin),
-            waitLogin(Sock, LoginManager)
+            M = protocol:decode_msg(Bin,'Message'),
+          	I = maps:get(user,M),
+          	U = maps:get(username,I),
+          	P = maps:get(password,I),
+            
+            case maps:get(type,M) of
+            	"REGISTER" ->
+          			LoginManager ! {create_account, U, P, self()},
+          			receive
+            			{_, created} ->
+            				UserBin = protocol:encode_msg(#{type => "RESPONSE", user => #{}, request => #{}, response => #{ result => "OK", description => "You are now registered."}},'Message'),
+            				gen_tcp:send(Sock,UserBin),
+            		  		manager(Sock);
+            			{_, user_exists} ->
+            		  		UserBina = protocol:encode_msg(#{type => "RESPONSE", user => undefined, request => undefined, response => #{ result => "ERROR", description => "User is already registered."}},'Message'),
+            				gen_tcp:send(Sock,UserBina),
+            		  		waitLogin(Sock, LoginManager)
+          			end;
+
+          		"LOGIN" ->
+          			LoginManager ! {login, U, P, self()},
+          			receive
+            			{_, logged} ->
+            				UserBin = protocol:encode_msg(#{type => "RESPONSE", user => #{}, request => #{}, response => #{ result => "OK", description => "You are now logged in."}},'Message'),
+            				gen_tcp:send(Sock,UserBin),
+            		  		manager(Sock);
+            			{_, invalid} ->
+            		  		UserBina = protocol:encode_msg(#{type => "RESPONSE", user => undefined, request => undefined, response => #{ result => "ERROR", description => "Wrong username or password."}},'Message'),
+            				gen_tcp:send(Sock,UserBina),
+            		  		waitLogin(Sock, LoginManager)
+          			end
+          	end
     end.
+
+
+manager(Sock) ->
+
 
 
 loginManager(M) ->
