@@ -6,13 +6,13 @@ option java_outer_classname = "Protocol";
 
 message Message {
   optional string type = 1;
-  optional ClientData clientData = 2;
+  optional User user = 2;
   optional Request request = 3;
   optional Response response = 4;
 }
 
 
-message ClientData {
+message User {
   optional string username = 1;
   optional string password = 2;
 }

@@ -3,9 +3,7 @@ client:
 	javac -cp dependencies/jar/protobuf-java-3.4.1.jar client/*.java
 
 frontend:
-	./dependencies/gpb/bin/protoc-erl protos/protocol.proto
-	mv protos/protocol.erl frontend/
-	mv protos/protocol.hrl frontend/
+	dependencies/gpb/bin/protoc-erl -I. -maps -o frontend/ protos/protocol.proto
 	erlc -I dependencies/gpb/include -o frontend/ frontend/protocol.erl
 
 runcli:

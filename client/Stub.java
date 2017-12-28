@@ -102,8 +102,8 @@ public class Stub extends Thread {
 		String username = menu.readString("Username: ");
 		String password = menu.readString("Password: ");
 		
-		ClientData c = ClientData.newBuilder().setUsername(username).setPassword(password).build();
-		Message req = Message.newBuilder().setType("REGISTER").setClientData(c).build();
+		User c = User.newBuilder().setUsername(username).setPassword(password).build();
+		Message req = Message.newBuilder().setType("REGISTER").setUser(c).build();
 		byte[] result = req.toByteArray();
 		os.write(result);
 
@@ -112,10 +112,10 @@ public class Stub extends Thread {
 		
 		if (rep.getResponse().getResult().equals("OK")) {
 			
-			req = Message.newBuilder().setType("LOGIN").setClientData(c).build();
+			req = Message.newBuilder().setType("LOGIN").setUser(c).build();
 			result = req.toByteArray();
 			os.write(result);
-			
+
 			msg = recvMsg(is);
 			rep = Message.parseFrom(msg);
 			
@@ -136,8 +136,8 @@ public class Stub extends Thread {
 		String username = menu.readString("Username: ");
 		String password = menu.readString("Password: ");
 		
-		ClientData c = ClientData.newBuilder().setUsername(username).setPassword(password).build();
-		Message req = Message.newBuilder().setType("LOGIN").setClientData(c).build();
+		User c = User.newBuilder().setUsername(username).setPassword(password).build();
+		Message req = Message.newBuilder().setType("LOGIN").setUser(c).build();
 		byte[] result = req.toByteArray();
 		os.write(result);
 			
