@@ -106,47 +106,51 @@ public class Stub extends Thread {
 		Message req = Message.newBuilder().setType("REGISTER").setClientData(c).build();
 		byte[] result = req.toByteArray();
 		os.write(result);
-		
 
 		byte[] msg = recvMsg(is);
 		Message rep = Message.parseFrom(msg);
 		
 		if (rep.getResponse().getResult().equals("OK")) {
-		//	req = AuthenticationRequest.newBuilder().setUsername(username).setPassword(password).setRequest(AuthenticationRequest.RequestType.LOGIN).build();
-		//	req.writeTo(os);
-		//	rep = AuthenticationResponse.parseDelimitedFrom(is);
-			client.setLogged(true);
-		}
+			
+			req = Message.newBuilder().setType("LOGIN").setClientData(c).build();
+			result = req.toByteArray();
+			os.write(result);
+			
+			msg = recvMsg(is);
+			rep = Message.parseFrom(msg);
+			
+			if(rep.getResponse().getResult().equals("OK")) {
+				client.setLogged(true);
+				menu.printResponse(rep.getResponse().getDescription());
+			}else {
+				menu.printResponse(rep.getResponse().getDescription());
+			}
 
-		menu.printResponse(rep.getResponse().getDescription());
+		}else
+			menu.printResponse(rep.getResponse().getDescription());
+
 		
 	}
 
-	private void login() {
+	private void login() throws IOException {
 		String username = menu.readString("Username: ");
 		String password = menu.readString("Password: ");
-		String query = String.join(" ", "LOGIN", username, password);
-
-		out.println(query);
-		String response = client.getResponse();
-
-		if (client.getReplyStatus())
+		
+		ClientData c = ClientData.newBuilder().setUsername(username).setPassword(password).build();
+		Message req = Message.newBuilder().setType("LOGIN").setClientData(c).build();
+		byte[] result = req.toByteArray();
+		os.write(result);
+			
+		byte[] msg = recvMsg(is);
+		Message rep = Message.parseFrom(msg);
+			
+		if(rep.getResponse().getResult().equals("OK")) {
 			client.setLogged(true);
-
-		/*
-		AuthenticationRequest req = AuthenticationRequest.newBuilder().setUsername(username).setPassword(password).setRequest(AuthenticationRequest.RequestType.LOGIN).build();
-		req.writeDelimitedTo(os);
-		
-		AuthenticationReply rep = AuthenticationReply.parseDelimitedFrom(is);
-		
-		if (rep.getResponse().equals(AuthenticationReply.ResponseType.OK)) {
-			client.setLogged(true);	
+			menu.printResponse(rep.getResponse().getDescription());
+		}else {
+			menu.printResponse(rep.getResponse().getDescription());
 		}
-		*/
-		menu.printResponse(response);
-
-
-
+		
 	}
 
 	private void readNotifications() {

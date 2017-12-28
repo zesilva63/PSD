@@ -2,7 +2,7 @@
 -export([server/1]).
 -record('ClientData',{username,password}).
 -record('Response',{result,description}).
--record('Message',{type,clientData,response}).
+-record('Message',{type,clientData, request, response}).
 
 
 server(Port) ->
@@ -19,7 +19,7 @@ login_manager(Sock) ->
     receive
         {tcp, Sock, Bin} ->
             protocol:decode_msg(Bin,'Message'),
-            UserBin = protocol:encode_msg(#'Message'{type = "RESPONSE",clientData = undefined, response = #'Response'{result = "OK", description = "You are now registered!"}}),
+            UserBin = protocol:encode_msg(#'Message'{type = "RESPONSE",clientData = undefined, request = undefined, response = #'Response'{result = "OK", description = "You are now registered!"}}),
             gen_tcp:send(Sock,UserBin),
             login_manager(Sock)
     end.

@@ -7,7 +7,8 @@ option java_outer_classname = "Protocol";
 message Message {
   optional string type = 1;
   optional ClientData clientData = 2;
-  optional Response response = 3;
+  optional Request request = 3;
+  optional Response response = 4;
 }
 
 
@@ -16,6 +17,11 @@ message ClientData {
   optional string password = 2;
 }
 
+message Request {
+	optional string company = 1;
+	optional int32 quantity = 2;
+	optional float price = 3;
+}
 
 message Response {
   optional string result = 1;
