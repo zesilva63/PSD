@@ -1,0 +1,31 @@
+syntax = "proto2";
+
+package client;
+
+option java_outer_classname = "Protocol";
+
+message Message {
+  optional string type = 1;
+  optional User user = 2;
+  optional Request request = 3;
+  optional Response response = 4;
+}
+
+
+message User {
+  optional string username = 1;
+  optional string password = 2;
+}
+
+message Request {
+	optional string company = 1;
+	optional int32 quantity = 2;
+	optional float price = 3;
+}
+
+message Response {
+  optional string result = 1;
+  optional string description = 2;
+}
+
+  
