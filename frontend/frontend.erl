@@ -25,7 +25,7 @@ waitLogin(Sock, LoginManager) ->
           	I = maps:get(user,M),
           	U = maps:get(username,I),
           	P = maps:get(password,I),
-            
+
             case maps:get(type,M) of
             	"REGISTER" ->
           			LoginManager ! {create_account, U, P, self()},
@@ -57,7 +57,6 @@ waitLogin(Sock, LoginManager) ->
 
 
 manager(Sock) ->
-
 
 
 loginManager(M) ->
