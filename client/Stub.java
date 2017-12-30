@@ -7,7 +7,6 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.NoSuchElementException;
 
-
 import client.Protocol.*;
 
 public class Stub extends Thread {
@@ -82,8 +81,8 @@ public class Stub extends Thread {
 		}
 	}
 
-	public static byte[] recvMsg(InputStream inpustream) {
-        try {
+	private static byte[] recvMsg(InputStream inpustream) {
+    try {
 
             byte len[] = new byte[1024];
             int count = inpustream.read(len); 

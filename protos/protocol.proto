@@ -27,5 +27,3 @@ message Response {
   optional string result = 1;
   optional string description = 2;
 }
-
-  
