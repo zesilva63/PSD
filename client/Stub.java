@@ -1,6 +1,5 @@
 package client;
 
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -9,7 +8,6 @@ import java.net.Socket;
 import java.util.NoSuchElementException;
 
 import client.Protocol.*;
-
 
 public class Stub extends Thread {
 	private Socket cliSocket;
@@ -84,7 +82,7 @@ public class Stub extends Thread {
 	}
 
 	private static byte[] recvMsg(InputStream inpustream) {
-        try {
+    try {
 
             byte len[] = new byte[1024];
             int count = inpustream.read(len); 
