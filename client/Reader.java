@@ -104,7 +104,7 @@ public class Reader extends Thread {
 		try {
 			line = in.readLine();
 		} catch (IOException e) {
-			System.out.println("Não foi possível ler novas mensagens");
+			System.out.println("It's impossible to read new notifications");
 		}
 
 		return line;

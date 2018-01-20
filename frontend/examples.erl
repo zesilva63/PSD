@@ -31,7 +31,7 @@ encode_msg(#{type => "REGISTER", user => #{ username => "zesilva63", password =>
 #'Message'{type => "SELL", user => #{ username => "marcelo140", password => "pass" }, request => #{company => "Google", quantity => 150, price => 2.50}, response => #{}}
 
 % resposta de venda efetuada 150 unidades google a 2.75 euros cada
-#'Message'{type => "RESPONSE", user => #{ username => "marcelo140", password => "pass" }, request => #{}, response => #{result => "OK", description => "150 units of Google stocks sold for 2.75 each."}}
+#'Message'{type => "BUY", user => #{ username => "marcelo140", password => "pass" }, request => #{}, response => #{result => "OK", description => "150 units of Google stocks sold for 2.75 each."}}
 
 
 % BUY

@@ -10,14 +10,20 @@ import java.util.NoSuchElementException;
 import client.Protocol.*;
 
 public class Stub extends Thread {
+	
 	private Socket cliSocket;
 	private ClientInfo client;
+	
 	private PrintWriter out;
+	
 	private InputStream is;
     private OutputStream os;
+	
 	private Menu menu;
 	private String[] initialMenu;
 	private String[] sessionMenu;
+	
+	private String username;
 
 	Stub(Socket cliSocket, ClientInfo client) throws IOException {
 		this.cliSocket = cliSocket;
@@ -72,9 +78,9 @@ public class Stub extends Thread {
 					break;
 			case 4: listAuctions();
 					break;
-			case 5: startAuction();
+			case 5: sell();
 					break;
-			case 6: bid();
+			case 6: buy();
 					break;
 			case 7: closeAuction();
 					break;
@@ -84,11 +90,11 @@ public class Stub extends Thread {
 	private static byte[] recvMsg(InputStream inpustream) {
     try {
 
-            byte len[] = new byte[1024];
+            byte len[] = new byte[4096];
             int count = inpustream.read(len); 
             byte[] temp = new byte[count];
             for (int i = 0; i < count; i++) { 
-                temp[i] = len[i]; 
+                temp[i] = len[i];
             } 
             return temp;
         } catch (Exception e) {
@@ -127,8 +133,6 @@ public class Stub extends Thread {
 
 		}else
 			menu.printResponse(rep.getResponse().getDescription());
-
-		
 	}
 
 	private void login() throws IOException {
@@ -146,6 +150,7 @@ public class Stub extends Thread {
 		if(rep.getResponse().getResult().equals("OK")) {
 			client.setLogged(true);
 			menu.printResponse(rep.getResponse().getDescription());
+			this.username = username;
 		}else {
 			menu.printResponse(rep.getResponse().getDescription());
 		}
@@ -162,9 +167,9 @@ public class Stub extends Thread {
 		}
 
 		if (amountNotifications == 0)
-			notifications = "> Não há novas notificações!\n";
+			notifications = "> Still no notifications to present!\n";
 		else
-			out.println("CONFIRMAR " + amountNotifications);
+			out.println("CONFIRM " + amountNotifications);
 
 		menu.printResponse(notifications);
 	}
@@ -176,22 +181,38 @@ public class Stub extends Thread {
 		menu.printResponse(response);
 	}
 
-	private void startAuction() {
-		String description = menu.readString("Descrição: ");
-		String query = String.join(" ", "INICIAR", description);
+	private void sell() throws IOException {
+		String company = menu.readString("Company: ");
+		int quantity = menu.readInt("Quantity to buy: ");
+		float price = menu.readFloat("Limit price: ");
+		
+		User c = User.newBuilder().setUsername(username).build();
+		Request r = Request.newBuilder().setCompany(company).setQuantity(quantity).setPrice(price).build();
+		Message m = Message.newBuilder().setType("SELL").setUser(c).setRequest(r).build();
+		byte[] result = m.toByteArray();
 
-		out.println(query);
+		byte[] msg = recvMsg(is);
+		Message mrep = Message.parseFrom(msg);
+		
+
+		os.write(result);
+		
 		String response = client.getResponse();
 
 		menu.printResponse(response);
 	}
 
-	private void bid() {
-		int itemID = menu.readInt("Item ID: ");
-		float value = menu.readFloat("Valor: ");
-		String query = "LICITAR " + itemID + " " + value;
-
-		out.println(query);
+	private void buy() throws IOException {
+		String company = menu.readString("Company: ");
+		int quantity = menu.readInt("Quantity to buy: ");
+		float price = menu.readFloat("Limit price: ");
+		
+		User c = User.newBuilder().setUsername(username).build();
+		Request r = Request.newBuilder().setCompany(company).setQuantity(quantity).setPrice(price).build();
+		Message m = Message.newBuilder().setType("BUY").setUser(c).setRequest(r).build();
+		byte[] result = m.toByteArray();
+		os.write(result);
+		
 		String response = client.getResponse();
 
 		menu.printResponse(response);
@@ -211,12 +232,12 @@ public class Stub extends Thread {
 		initialMenu = new String[2];
 		sessionMenu = new String[5];
 
-		initialMenu[0] = "1) Registar";
-		initialMenu[1] = "2) Iniciar Sessão";
+		initialMenu[0] = "1) Register";
+		initialMenu[1] = "2) Login";
 
 		sessionMenu[1] = "2) Listar leilões";
-		sessionMenu[2] = "3) Iniciar leilão";
-		sessionMenu[3] = "4) Licitar item";
+		sessionMenu[2] = "3) Sell shares";
+		sessionMenu[3] = "4) Buy shares";
 		sessionMenu[4] = "5) Terminar leilão";
 	}
 }
