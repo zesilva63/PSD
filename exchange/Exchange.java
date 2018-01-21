@@ -12,7 +12,7 @@ public class Exchange {
 	public Exchange() {
 		this.companies = new HashMap<>();
 	}
-
+/*
 	public addRequest(Message m) {
 		String comp = m.getRequest().getCompany();
 		String user = m.getUser().getUsername();
@@ -23,5 +23,5 @@ public class Exchange {
 		Order o = new Order(user,comp,quant,price);
 		c.addOrder(o);
 	}
-
+*/
 }
