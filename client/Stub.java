@@ -168,8 +168,6 @@ public class Stub extends Thread {
 
 		if (amountNotifications == 0)
 			notifications = "> Still no notifications to present!\n";
-		else
-			out.println("CONFIRM " + amountNotifications);
 
 		menu.printResponse(notifications);
 	}
@@ -187,13 +185,9 @@ public class Stub extends Thread {
 		float price = menu.readFloat("Limit price: ");
 		
 		User c = User.newBuilder().setUsername(username).build();
-		Request r = Request.newBuilder().setCompany(company).setQuantity(quantity).setPrice(price).build();
-		Message m = Message.newBuilder().setType("SELL").setUser(c).setRequest(r).build();
+		Order o = Order.newBuilder().setCompany(company).setQuantity(quantity).setPrice(price).build();
+		Message m = Message.newBuilder().setType("SELL").setUser(c).setOrder(o).build();
 		byte[] result = m.toByteArray();
-
-		byte[] msg = recvMsg(is);
-		Message mrep = Message.parseFrom(msg);
-		
 
 		os.write(result);
 		
@@ -208,8 +202,9 @@ public class Stub extends Thread {
 		float price = menu.readFloat("Limit price: ");
 		
 		User c = User.newBuilder().setUsername(username).build();
-		Request r = Request.newBuilder().setCompany(company).setQuantity(quantity).setPrice(price).build();
-		Message m = Message.newBuilder().setType("BUY").setUser(c).setRequest(r).build();
+		Order o = Order.newBuilder().setCompany(company).setQuantity(quantity).setPrice(price).build();
+		Message m = Message.newBuilder().setType("BUY").setUser(c).setOrder(o).build();
+		
 		byte[] result = m.toByteArray();
 		os.write(result);
 		

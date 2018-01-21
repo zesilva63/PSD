@@ -1,45 +1,40 @@
 package client;
+
 import java.net.Socket;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.io.IOException;
+
 import client.*;
+import client.Protocol.*;
 
 public class Reader extends Thread {
 	private ClientInfo client;
 	private Socket cliSocket;
-	private BufferedReader in;
+	private InputStream is;
 
 	Reader(Socket cliSocket, ClientInfo client) throws IOException {
 		this.client = client;
 		this.cliSocket = cliSocket;
-		in = new BufferedReader(new InputStreamReader(cliSocket.getInputStream()));
+		this.is = cliSocket.getInputStream();
 	}
 
 	public void run() {
-		String line, header, content;
-
-		while((line = readLine()) != null) {
-			header = line;
-
-			if (header.equals("NOTIFICATION"))
-				content = readContent();
-			else {
-				switch(client.getCommand()) {
-					case 4: content = readAuctions();
-							break;
-					case 5: content = readNewAuction();
-							break;
-					case 7: content = readCloseAuction();
-							break;
-					default: content = readContent();
-				}
+		String header, content;
+		Message m;
+		while(((m = readMessage()) != null)) {
+			header = m.getType();
+			
+			if(header.equals("RESPONSE")) {
+				header = getStatus(m);
+				content = readResponse(m);
 			}
-
+			else {
+				content = readNotification(m);
+			}
 			giveMessage(header, content);
 		}
 
-		System.out.println("\nLigação terminada pelo servidor");
+		System.out.println("\nConnection ended by the server.");
 		System.exit(1);
 	}
 
@@ -52,61 +47,59 @@ public class Reader extends Thread {
 			client.addNotification(content);
 	}
 
-	private String readAuctions() {
-		String line;
-		StringBuilder sb = new StringBuilder();
-
-		while((line = readLine()) != null) {
-			if (line.isEmpty())
-				break;
-
-			sb.append(line).append("\n");
-			sb.append(readLine()).append("\n");
-			sb.append(readLine()).append("\n\n");
+	private String readNotification(Message m) {
+		String response;
+		String comp = m.getOrder().getCompany();
+		int quant = m.getOrder().getQuantity();
+		float price = m.getOrder().getPrice();
+		String data = quant + " of " + comp + " shares for " + price + " each.";
+		
+		switch(m.getResponse().getResult()) {
+			case "SELL": response = "You sold " + data; 
+						 break;
+			case "BUY": response = "You bought " + data;
+					    break;
+			default: response = "Transaction: " + data;
+					 break;
 		}
-
-		if (sb.length() == 0)
-			return "> Neste momento não temos nenhum leilão a decorrer!\n";
-
-		sb.deleteCharAt(sb.length() - 1);
-		return sb.toString();
+		return response;
 	}
 
-	private String readNewAuction() {
-		String newAuction = readLine();
-		readLine();
-		return "> O seu leilão é indentificado pelo número " + newAuction + "!\n";
+	private String getStatus(Message m) {
+		return m.getResponse().getResult();
 	}
 
-	private String readCloseAuction() {
-		String message = readLine();
-		readLine();
-		return "> " + message + "\n";
+
+	private String readResponse(Message m) {
+		return m.getResponse().getDescription();
 	}
 
-	private String readContent() {
-		StringBuilder sb = new StringBuilder();
-		String line;
 
-		while((line = readLine()) != null) {
-			if (line.isEmpty())
-				break;
-
-			sb.append(line).append("\n");
+	private Message readMessage() {
+		Message m = null;
+		try {	
+			byte[] msg = recvMsg(is);
+			m = Message.parseFrom(msg);
+		} catch(Exception e) {
+			System.out.println("erro");
 		}
-
-		return sb.toString();
+		return m;
 	}
 
-	private String readLine() {
-		String line = null;
+	private static byte[] recvMsg(InputStream inpustream) {
+    	try {
 
-		try {
-			line = in.readLine();
-		} catch (IOException e) {
-			System.out.println("It's impossible to read new notifications");
-		}
-
-		return line;
+            byte len[] = new byte[4096];
+            int count = inpustream.read(len); 
+            byte[] temp = new byte[count];
+            for (int i = 0; i < count; i++) { 
+                temp[i] = len[i];
+            } 
+            return temp;
+        } catch (Exception e) {
+            System.out.println("recvMsg() occur exception!" + e.toString());
+        }
+        return null;
 	}
+
 }
