@@ -77,6 +77,7 @@ public class Reader extends Thread {
 
 	private Message readMessage() {
 		Message m = null;
+		System.out.println("HELLO");
 		try {	
 			byte[] msg = recvMsg(is);
 			m = Message.parseFrom(msg);

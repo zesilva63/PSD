@@ -13,7 +13,7 @@ public class Client {
 		Reader reader = new Reader(cli, info);
 		Stub stub = new Stub(cli, info);
 
-		//reader.start();
+		reader.start();
 		stub.start();
 	}
 }

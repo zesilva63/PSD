@@ -47,7 +47,7 @@ public class Stub extends Thread {
 			}
 		}
 
-		System.out.println("\nLigação terminada!");
+		System.out.println("\nConnection ended!");
 		System.exit(0);
 	}
 
@@ -58,7 +58,7 @@ public class Stub extends Thread {
 			if (!client.isLogged())
 				option = menu.show(initialMenu);
 			else {
-				sessionMenu[0] = "1) Ler notificações " + "(" + client.getNumberOfNotifications() + ")";
+				sessionMenu[0] = "1) Read notifications " + "(" + client.getNumberOfNotifications() + ")";
 				option = menu.show(sessionMenu) + 2;
 			}
 		} catch (NoSuchElementException e) {
@@ -76,7 +76,7 @@ public class Stub extends Thread {
 					break;
 			case 3: readNotifications();
 					break;
-			case 4: listAuctions();
+			case 4: subscribeCompany();
 					break;
 			case 5: sell();
 					break;
@@ -89,7 +89,6 @@ public class Stub extends Thread {
 
 	private static byte[] recvMsg(InputStream inpustream) {
     try {
-
             byte len[] = new byte[4096];
             int count = inpustream.read(len); 
             byte[] temp = new byte[count];
@@ -112,27 +111,22 @@ public class Stub extends Thread {
 		byte[] result = req.toByteArray();
 		os.write(result);
 
-		byte[] msg = recvMsg(is);
-		Message rep = Message.parseFrom(msg);
-		
-		if (rep.getResponse().getResult().equals("OK")) {
+		String response = client.getResponse();
+		System.out.println("RESPONSE: " +response);
+		if (client.getReplyStatus()) {
 			
 			req = Message.newBuilder().setType("LOGIN").setUser(c).build();
 			result = req.toByteArray();
 			os.write(result);
 
-			msg = recvMsg(is);
-			rep = Message.parseFrom(msg);
-			
-			if(rep.getResponse().getResult().equals("OK")) {
-				client.setLogged(true);
-				menu.printResponse(rep.getResponse().getDescription());
-			}else {
-				menu.printResponse(rep.getResponse().getDescription());
-			}
+			response = client.getResponse();
 
-		}else
-			menu.printResponse(rep.getResponse().getDescription());
+			if(client.getReplyStatus()) {
+				client.setLogged(true);
+			}
+		}
+		
+		menu.printResponse(response);
 	}
 
 	private void login() throws IOException {
@@ -143,18 +137,14 @@ public class Stub extends Thread {
 		Message req = Message.newBuilder().setType("LOGIN").setUser(c).build();
 		byte[] result = req.toByteArray();
 		os.write(result);
-			
-		byte[] msg = recvMsg(is);
-		Message rep = Message.parseFrom(msg);
-			
-		if(rep.getResponse().getResult().equals("OK")) {
+		String response = client.getResponse();
+
+		if(client.getReplyStatus()) {
 			client.setLogged(true);
-			menu.printResponse(rep.getResponse().getDescription());
 			this.username = username;
 		}else {
-			menu.printResponse(rep.getResponse().getDescription());
+			menu.printResponse(response);
 		}
-		
 	}
 
 	private void readNotifications() {
@@ -172,8 +162,12 @@ public class Stub extends Thread {
 		menu.printResponse(notifications);
 	}
 
-	private void listAuctions() {
-		out.println("LISTAR");
+	private void subscribeCompany() {
+		String company = menu.readString("Company to subscribe: ");
+		Message req = Message.newBuilder().setType("SUBSCRIBE").setDest(comp).build();
+		
+		byte[] result = m.toByteArray();
+		os.write(result);
 
 		String response = client.getResponse();
 		menu.printResponse(response);
@@ -230,7 +224,7 @@ public class Stub extends Thread {
 		initialMenu[0] = "1) Register";
 		initialMenu[1] = "2) Login";
 
-		sessionMenu[1] = "2) Listar leilões";
+		sessionMenu[1] = "2) Subscribe company";
 		sessionMenu[2] = "3) Sell shares";
 		sessionMenu[3] = "4) Buy shares";
 		sessionMenu[4] = "5) Terminar leilão";

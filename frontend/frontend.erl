@@ -3,7 +3,7 @@
 -record('ClientData',{username, password}).
 -record('Order',{company, quantity, price}).
 -record('Response',{result, description}).
--record('Message',{dest,type, user, order, response}).
+-record('Message',{dest, type, user, order, response}).
 
 
 server(Port) ->
@@ -31,20 +31,20 @@ waitLogin(Sock, LoginManager) ->
           			LoginManager ! {create_account, U, P, self()},
           			receive
             			{_, created} ->
-            				ResBin = protocol:encode_msg(#{dest => U, type => "RESPONSE", user => #{}, order => #{}, response => #{ result => "OK", description => "You are now registered."}},'Message'),
+                    ResBin = protocol:encode_msg(#{dest => U, type => "RESPONSE", user => #{}, order => #{}, response => #{ result => "OK", description => "You are now registered."}},'Message'),
             				gen_tcp:send(Sock,ResBin),
-            		  		waitLogin(Sock, LoginManager);
+                    waitLogin(Sock, LoginManager);
             			{_, user_exists} ->
-            		  		ResBin = protocol:encode_msg(#{dest => U, type => "RESPONSE", user => undefined, order => undefined, response => #{ result => "EXCEPTION", description => "User is already registered."}},'Message'),
-            				  gen_tcp:send(Sock,ResBin),
-            		  		waitLogin(Sock, LoginManager)
+            		  	ResBin = protocol:encode_msg(#{dest => U, type => "RESPONSE", user => undefined, order => undefined, response => #{ result => "EXCEPTION", description => "User is already registered."}},'Message'),
+            				gen_tcp:send(Sock,ResBin),
+            		  	waitLogin(Sock, LoginManager)
           			end;
 
           		"LOGIN" ->
           			 LoginManager ! {login, U, P, self()},
           			 receive
             			{_, logged} ->
-            				  ResBin = protocol:encode_msg(#{dest => U, type => "RESPONSE", user => #{}, order => #{}, response => #{ result => "OK", description => "You are now logged in."}},'Message'),
+                      ResBin = protocol:encode_msg(#{dest => U, type => "RESPONSE", user => #{}, order => #{}, response => #{ result => "OK", description => "You are now logged in."}},'Message'),
             				  gen_tcp:send(Sock,ResBin),
             		  		manager(Sock,U);
             			{_, invalid} ->
@@ -59,7 +59,7 @@ waitLogin(Sock, LoginManager) ->
 manager(Sock, User) ->
     receive
             {tcp, Sock, Bin} ->
-                M = protocol:decode_msg(Bin,'Message'),
+                M = protocol:decode_msg(Bin,'Message')
     %            Req = maps:get(request,M),
      %           Comp = maps:get(company,Req),
       %          Quant = maps:get(quantity,Req),
@@ -75,7 +75,8 @@ loginManager(M) ->
       		case maps:find(U, M) of
         		error ->
           			From ! {?MODULE, created},
-          			loginManager(maps:put(U, {P, false}, M));
+          			loginManager(maps:put(U, {P, false}, M
+                  ));
         		_ -> 
           			From ! {?MODULE, user_exists},
           			loginManager(M)

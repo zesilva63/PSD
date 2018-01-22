@@ -17,9 +17,9 @@ public class Menu {
 		System.out.println(menu + "\n");
 
 		while(option <= 0 || option > entries.length) {
-	 		option = readInt("Escolha uma das opções: ");
+	 		option = readInt("Choose one of the options: ");
 			if (option <= 0 || option > entries.length)
-				System.out.println("\n> Opção inválida\n");
+				System.out.println("\n> Valid option\n");
 		}
 
 		return option;
@@ -44,7 +44,7 @@ public class Menu {
 			System.out.print(msg);
 			num = Integer.parseInt(in.next());
 		} catch (NumberFormatException e) {
-			System.out.println("\n> O valor introduzido não é válido\n");
+			System.out.println("\n> The value introduced is not valid\n");
 			num = readInt(msg);
 		}
 
@@ -58,10 +58,10 @@ public class Menu {
 			System.out.print(msg);
 			num = Float.parseFloat(in.next());
 		} catch (NumberFormatException e) {
-			System.out.println("\n> O valor introduzido não é válido\n");
+			System.out.println("\n> The value introduced is not valid\n");
 			num = readFloat(msg);
 		}
-
+		
 		return num;
 	}
 }
