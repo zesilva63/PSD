@@ -49,8 +49,11 @@ public class Stock {
         current = Optional.of(price);
     }
 
-    public Stock close() {
+    public void close() {
         close = Optional.fromNullable(current.orNull());
+    }
+
+    public Stock open() {
         return new Stock(close);
     }
 

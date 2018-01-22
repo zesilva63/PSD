@@ -11,14 +11,15 @@ public class Company {
     private Exchange exchange;
     private Stock yesterday, today;
 
-    public Company(String name) {
+    public Company(String name, Exchange exchange) {
         this.name = name;
 
         Optional<Integer> initialValue = generateInitialStocks();
         yesterday = new Stock(initialValue);
-        today = yesterday.close();
+        yesterday.close();
+        today = yesterday.open();
 
-        exchange = new Exchange();
+        this.exchange = exchange;
     }
 
     public String getName() {
@@ -48,7 +49,12 @@ public class Company {
     }
 
     public void close() {
+        today.close();
+    }
 
+    public void nextDay() {
+        yesterday = today;
+        today = yesterday.open();
     }
 
     private Optional<Integer> generateInitialStocks() {

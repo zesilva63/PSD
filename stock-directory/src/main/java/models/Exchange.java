@@ -1,9 +1,15 @@
 package models;
 
 public class Exchange {
-    private String name = "Lisboa";
-    private String host = "23.4.132.44";
-    private int port = 3401;
+    private String name;
+    private String host;
+    private int port;
+
+    public Exchange(String name, String host, int port) {
+        this.name = name;
+        this.host = host;
+        this.port = port;
+    }
 
     public String getName() {
         return name;
