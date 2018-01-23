@@ -3,6 +3,7 @@ package exchange;
 import java.util.*;
 import exchange.Protocol.*;
 
+
 public class Company {
 
     private String company;
@@ -16,48 +17,59 @@ public class Company {
 		this.transactions = new ArrayList<>();
 	}
 
-	public Transaction registBuyOrder(Order buyOrder) {
-	    Order bestSellOrder = sellOrders.poll();
-		return newTransaction(bestSellOrder, buyOrder);
+	public List<Transaction> registBuyOrder(Order buyOrder) {
+		buyOrders.add(buyOrder);
+		return newTransaction();
 	}
 
-	public Transaction registSellOrder(Order sellOrder) {
-		Order bestBuyOrder = buyOrders.poll();
-		return newTransaction(sellOrder, bestBuyOrder);
+	public List<Transaction> registSellOrder(Order sellOrder) {
+		sellOrders.add(sellOrder);
+		return newTransaction();
 	}
 
-	private Transaction newTransaction(Order sellorder, Order buyOrder) {
-	    if (isTransactionPossible(sellOrder, buyOrder)) {
 
-	        int quantity = Math.min(sellOrder.getQuantity(), buyOrder.getQuantity());
+	private List<Transaction> newTransaction() {
 
-			float sellPrice = sellOrder.getPrice();
-			float buyPrice = buyOrder.getPrice();
-			float price = roundPrice((sellPrice + buyPrice) / 2);
+		List<Transaction> transactions = new ArrayList<>();
+		boolean repeat = true;
+		Order sellOrder;
+		Order buyOrder;
 
-	        Transaction transaction = new Transaction(company, sellOrders.getUser(), buyOrder.getUser(), quantity, price);
-			transactions.add(transaction);
+		while(repeat) {
+			sellOrder = sellOrders.poll();
+			buyOrder = buyOrders.poll();
 
-			if (quantity < buyOrder.getQuantity()) {
-				buyOrder.decreaseQuantity(quantity);
-				buyOrders.add(buyOrder);
-			} else if (quantity > buyOrder.getQuantity()) {
-				sellOrder.decreaseQuantity(quantity);	
+			if (isTransactionPossible(sellOrder, buyOrder)) {
+
+				int quantity = Math.min(sellOrder.getQuantity(), buyOrder.getQuantity());
+
+				float sellPrice = sellOrder.getPrice();
+				float buyPrice = buyOrder.getPrice();
+				float price = roundPrice((sellPrice + buyPrice) / 2);
+
+				Transaction transaction = new Transaction(company, sellOrder.getUser(), buyOrder.getUser(), quantity, price);
+				transactions.add(transaction);
+
+				if (quantity < buyOrder.getQuantity()) {
+					buyOrder.decreaseQuantity(quantity);
+					buyOrders.add(buyOrder);
+				} else if (quantity > buyOrder.getQuantity()) {
+					sellOrder.decreaseQuantity(quantity);
+					sellOrders.add(sellOrder);
+				}
+
+			} else {
 				sellOrders.add(sellOrder);
+				buyOrders.add(buyOrder);
+				repeat = false;
 			}
-
-			return transaction;
-        } else {
-			sellOrders.add(sellOrder);
-			buyOrders.add(buyOrder);
 		}
-
-		return null;
+		return transactions;
 	}
+
 
 	private boolean isTransactionPossible(Order sellOrder, Order buyOrder) {
-		return sellOrder != null and buyOrder != null and 
-			   sellOrder.getPrice() <= buyOrder.getPrice();
+		return (sellOrder != null) && (buyOrder != null) && (sellOrder.getPrice() <= buyOrder.getPrice());
 	}
 
 	private float roundPrice(float price) {

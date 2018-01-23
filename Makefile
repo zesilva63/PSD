@@ -10,18 +10,18 @@ frontend:
 
 exchange:
 	protoc --java_out=. protos/protocol.proto
-	javac -cp dependencies/jar/protobuf-java-3.4.1.jar:dependencies/jar/jeromq-0.4.3.jar:. exchange/*.java
+	javac -cp dependencies/jar/protobuf-java-3.4.1.jar:dependencies/jar/jeromq-0.4.3.jar:dependencies/jar/gson-2.6.2.jar exchange/*.java
 
 
 runcli:
 	java -cp .:dependencies/jar/protobuf-java-3.4.1.jar:dependencies/jar/jeromq-0.4.3.jar:. client.Client localhost
 
 run-exchange:
-	java -cp dependencies/jar/protobuf-java-3.4.1.jar:dependencies/jar/jeromq-0.4.3.jar:. exchange.Exchange
+	java -cp dependencies/jar/protobuf-java-3.4.1.jar:dependencies/jar/jeromq-0.4.3.jar:dependencies/jar/gson-2.6.2.jar. exchange.Exchange
 
 clean:
 	rm client/*.class
 	rm frontend/*.beam
 	rm frontend/protocol.erl
 	rm client/Protocol.java
-	rm exchange/Protocol.java
+	rm exchange/*.class

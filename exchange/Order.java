@@ -7,7 +7,6 @@ public class Order {
     private int quantity;
     private float price;
 
-
     public Order(String user, String company, int quantity, float price) {
         this.user = user;
         this.company = company;
@@ -30,4 +29,9 @@ public class Order {
     public float getPrice() {
         return price;
     }
+
+    public void decreaseQuantity(int quantity) {
+        this.quantity -= quantity;
+    }
+    
 }
