@@ -21,11 +21,13 @@ exchange:
 	protoc --java_out=. protos/protocol.proto
 	javac -cp dependencies/jar/protobuf-java-3.4.1.jar:dependencies/jar/jeromq-0.4.3.jar:dependencies/jar/gson-2.6.2.jar exchange/*.java
 
+# 7000 -> frontend (mudar consoante cliente) | 4442 XPUB
 runcli:
-	java -cp .:dependencies/jar/protobuf-java-3.4.1.jar:dependencies/jar/jeromq-0.4.3.jar:. client.Client localhost
+	java -cp .:dependencies/jar/protobuf-java-3.4.1.jar:dependencies/jar/jeromq-0.4.3.jar:. client.Client localhost 7000 4442
 
+# 3331 -> push para broker | 5000 pull do ator (mudar consoante exchange) | XSUB 4441
 run-exchange:
-	java -cp dependencies/jar/protobuf-java-3.4.1.jar:dependencies/jar/jeromq-0.4.3.jar:dependencies/jar/gson-2.6.2.jar. exchange.Exchange
+	java -cp dependencies/jar/protobuf-java-3.4.1.jar:dependencies/jar/jeromq-0.4.3.jar:dependencies/jar/gson-2.6.2.jar. exchange.Exchange 3331 5000 4441
 
 .PHONY: stock-directory exchange frontend client 
 
@@ -36,4 +38,4 @@ clean:
 	-@rm client/Protocol.java
 	-@rm exchange/Protocol.java
 	-@mvn $(DIRECTORY_MVN_OPTIONS) clean
-	rm exchange/*.class
+	-@rm exchange/*.class
