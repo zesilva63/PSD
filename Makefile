@@ -18,7 +18,7 @@ frontend:
 #	erlc -I dependencies/erlzmq2-master/include -o frontend/ frontend/erlzmq_nif.erl
 
 exchange:
-	protoc --java_out=. protos/protocol.proto
+	protoc --java_out=. protos/protocol2.proto
 	javac -cp dependencies/jar/protobuf-java-3.4.1.jar:dependencies/jar/jeromq-0.4.3.jar:dependencies/jar/gson-2.6.2.jar exchange/*.java
 
 # 7000 -> frontend (mudar consoante cliente) | 4442 XPUB
