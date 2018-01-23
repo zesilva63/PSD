@@ -40,7 +40,6 @@ public class ClientInfo {
 	synchronized public void setReply(boolean success, String content) {
 		this.success = success;
 		this.content = content;
-System.out.println("A maria foi " + Boolean.toString(success));
 		reply = 1 - reply;
 		notifyAll();
 	}

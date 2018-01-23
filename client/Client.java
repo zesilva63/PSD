@@ -14,7 +14,7 @@ public class Client {
 		ZMQ.Context context = ZMQ.context(1);
 		ZMQ.Socket sub = context.socket(ZMQ.SUB);
 		sub.connect("tcp://localhost:" + args[2]);
-		String s = "";
+		String s = "TEST";
 		sub.subscribe(s);
 
 		Socket cli = new Socket(args[0], front_port);

@@ -19,7 +19,7 @@ public class Menu {
 		while(option <= 0 || option > entries.length) {
 	 		option = readInt("Choose one of the options: ");
 			if (option <= 0 || option > entries.length)
-				System.out.println("\n> Valid option\n");
+				System.out.println("\n> Invalid option\n");
 		}
 
 		return option;

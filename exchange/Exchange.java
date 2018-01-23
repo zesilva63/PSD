@@ -37,7 +37,6 @@ public class Exchange {
 		while (true) {
 
 			Message msg = exchange.recvMessage();
-	System.out.println("GOTIT");
 			Order order = exchange.createOrder(msg);
 			String company = msg.getOrder().getCompany();
 
@@ -46,7 +45,6 @@ public class Exchange {
 			else
 				transactions = exchange.addBuyOrder(company, order);
 
-	System.out.println("Devolvi matches " + transactions.size());
 			for (Transaction t : transactions) {
 				if(t != null) {
 					try {

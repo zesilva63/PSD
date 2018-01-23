@@ -16,7 +16,6 @@ public class Notificator extends Thread {
 
     public void run() {
         String msg;
-		System.out.println("A ma");
         while(true) {
             byte[] b = sub.recv();
             msg = new String(b);
