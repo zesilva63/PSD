@@ -1,12 +1,10 @@
 package client;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.net.Socket;
 import java.util.NoSuchElementException;
 import org.zeromq.ZMQ;
+import java.lang.*;
+import java.io.*;
+import java.net.*;
 
 import client.Protocol.*;
 
@@ -91,7 +89,11 @@ public class Stub extends Thread {
 					break;
 			case 8: buy();
 					break;
-			case 9: nop();
+			case 9: try {listCompanies();} catch(Exception e) {System.out.println("Error receiving info");}
+					break;
+			case 10: try {companyInfo();} catch(Exception e) {System.out.println("Error receiving info");}
+					break;
+			case 11: nop();
 					break;
 		}
 	}
@@ -111,9 +113,6 @@ public class Stub extends Thread {
         return null;
 	}
 
-	private void nop() {
-	
-	}
 
 	private void signup() throws IOException {
 		String username = menu.readString("Username: ");
@@ -231,19 +230,53 @@ public class Stub extends Thread {
 		os.write(result);
 	}
 
-	private void closeAuction() {
-		int itemID = menu.readInt("Item ID: ");
-		String query = "TERMINAR " + itemID;
+	private void nop() {}
 
-		out.println(query);
-		String response = client.getResponse();
+	private void listCompanies() throws Exception {
+		String path = "http://localhost:8080/companies";
+		URL url = new URL(path);
+		HttpURLConnection con = (HttpURLConnection) url.openConnection();
+		con.setRequestMethod("GET");
 
-		menu.printResponse(response);
+		int response = con.getResponseCode();
+
+		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+		String inputLine;
+		StringBuffer reply = new StringBuffer();
+
+		while ((inputLine = in.readLine()) != null) {
+			reply.append(inputLine);
+		}
+		in.close();
+
+		System.out.println(reply.toString());
+	}
+
+	private void companyInfo() throws Exception {
+		String company = menu.readString("Company: ");
+		String path = "http://localhost:8080/company/" + company;
+		URL url = new URL(path);
+
+		HttpURLConnection con = (HttpURLConnection) url.openConnection();
+		con.setRequestMethod("GET");
+
+		int response = con.getResponseCode();
+
+		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+		String inputLine;
+		StringBuffer reply = new StringBuffer();
+
+		while ((inputLine = in.readLine()) != null) {
+			reply.append(inputLine);
+		}
+		in.close();
+
+		System.out.println(reply.toString());
 	}
 
 	private void setUpMenus() {
 		initialMenu = new String[2];
-		sessionMenu = new String[7];
+		sessionMenu = new String[9];
 
 		initialMenu[0] = "1) Register";
 		initialMenu[1] = "2) Login";
@@ -252,6 +285,8 @@ public class Stub extends Thread {
 		sessionMenu[3] = "4) Unsubscribe company";
 		sessionMenu[4] = "5) Sell shares";
 		sessionMenu[5] = "6) Buy shares";
-		sessionMenu[6] = "7) Nop";
+		sessionMenu[6] = "7) List companies";
+		sessionMenu[7] = "8) Get company info";
+		sessionMenu[8] = "9) Nop";
 	}
 }
