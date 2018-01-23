@@ -27,10 +27,11 @@ public class Exchange {
 		ZMQ.Socket pub = context.socket(ZMQ.PUB);
 		pub.connect("tcp://localhost:" + args[2]);
 
-		Exchange exchange = new Exchange(push, pull, pub);
+		Exchange exchange = populateExchange(push, pull, pub, Integer.parseInt(args[3]));
 		DirectoryManager directory = new DirectoryManager();
 		MessageCreator creator = new MessageCreator();
 		List<Transaction> transactions;
+
 
 		while (true) {
 
@@ -71,6 +72,13 @@ public class Exchange {
 		this.pub = pub;
 	}
 
+	public Exchange(ZMQ.Socket push , ZMQ.Socket pull, ZMQ.Socket pub, Map<String, Company> companies) {
+		this.companies = companies;
+		this.push = push;
+		this.pull = pull;
+		this.pub = pub;
+	}
+
 	public List<Transaction> addBuyOrder(String company, Order buyOrder) {
 		return this.companies.get(company).registBuyOrder(buyOrder);
 	}
@@ -100,5 +108,26 @@ public class Exchange {
 	}
 
 
+    public static Exchange populateExchange(ZMQ.Socket push , ZMQ.Socket pull, ZMQ.Socket pub, int number) {
+
+        Map<String,Company> companies = new HashMap();
+
+        switch(number){
+            case 1: 
+                companies.put("Gota", new Company("Gota")); 
+                companies.put("Peões", new Company("Peões")); 
+                companies.put("Speedy", new Company("Speedy")); 
+			case 2:
+                companies.put("Diobar", new Company("Diobar")); 
+                companies.put("Carpe Noctem", new Company("Carpe Noctem")); 
+                companies.put("Stephane", new Company("Stephane")); 
+			case 3:
+				companies.put("Bar Académico", new Company("Bar Académico"));
+				companies.put("Pão de Forma", new Company("Pão de Forma"));
+            default: break;
+        }
+
+        return new Exchange(push, pull, pub, companies);
+    }
 
 }

@@ -131,6 +131,7 @@ public class Stub extends Thread {
 
 			if(client.getReplyStatus()) {
 				client.setLogged(true);
+				this.username = username;
 			}
 		}
 		
@@ -187,6 +188,7 @@ public class Stub extends Thread {
 
 	private void subscribeCompany() {
 		String company = menu.readString("Company to subscribe: ");
+		
 		sub.subscribe(company.getBytes());
 		System.out.println("Transactions from " + company + " subscribed.\n");
 	}
@@ -215,6 +217,7 @@ public class Stub extends Thread {
 		int quantity = menu.readInt("Quantity to buy: ");
 		float price = menu.readFloat("Limit price: ");
 		
+		System.out.println("Maria " + username);
 		User c = User.newBuilder().setUsername(username).build();
 		Order o = Order.newBuilder().setCompany(company).setQuantity(quantity).setPrice(price).build();
 		Message m = Message.newBuilder().setType("BUY").setUser(c).setOrder(o).build();

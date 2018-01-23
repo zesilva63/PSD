@@ -15,8 +15,9 @@ client:
 frontend:
 	dependencies/gpb/bin/protoc-erl -I. -maps -o frontend/ protos/protocol.proto
 	erlc -I dependencies/gpb/include -o frontend/ frontend/protocol.erl
-#	erlc -I dependencies/erlzmq2-master/include -o frontend/ frontend/erlzmq.erl
-#	erlc -I dependencies/erlzmq2-master/include -o frontend/ frontend/erlzmq_nif.erl
+	erlc -I dependencies/erlzmq/include -o frontend/ frontend/erlzmq.erl
+	erlc -I dependencies/erlzmq/include -o frontend/ frontend/erlzmq_nif.erl
+	erlc -o frontend/ frontend/exchange*.erl frontend/mochijson.erl frontend/frontend.erl frontend/loginManager.erl frontend/userSession.erl
 
 exchange:
 	protoc --java_out=. protos/protocol2.proto
@@ -32,7 +33,7 @@ runcli:
 
 # 3331 -> push para broker | 5000 pull do ator (mudar consoante exchange) | XSUB 4441
 run-exchange:
-	java -cp .:dependencies/jar/protobuf-java-3.4.1.jar:dependencies/jar/jeromq-0.4.3.jar:dependencies/jar/gson-2.6.2.jar exchange.Exchange 3331 5000 4441
+	java -cp .:dependencies/jar/protobuf-java-3.4.1.jar:dependencies/jar/jeromq-0.4.3.jar:dependencies/jar/gson-2.6.2.jar exchange.Exchange 3331 5000 4441 1
 
 run-pub-broker:
 	java -cp .:dependencies/jar/jeromq-0.4.3.jar exchange.PubSubBroker 4441 4442

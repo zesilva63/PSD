@@ -23,15 +23,10 @@ public class Reader extends Thread {
 		String header, content;
 		Message m;
 		while(((m = readMessage()) != null)) {
-			header = m.getType();
 			
-			if(header.equals("RESPONSE")) {
-				header = getStatus(m);
-				content = readResponse(m);
-			}
-			else {
-				content = readTransaction(m);
-			}
+			header = getStatus(m);
+			content = readResponse(m);
+
 			giveMessage(header, content);
 		}
 
@@ -78,6 +73,7 @@ public class Reader extends Thread {
 
 	private Message readMessage() {
 		Message m = null;
+
 		try {
 			byte[] msg = recvMsg(is);
 			m = Message.parseFrom(msg);

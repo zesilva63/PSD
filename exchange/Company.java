@@ -11,7 +11,8 @@ public class Company {
 	private Queue<Order> sellOrders;
 	private List<Transaction> transactions;
 
-	public Company() {
+	public Company(String company) {
+		this.company = company;
 		this.buyOrders = new PriorityQueue<>(compareByPrice);
 		this.sellOrders = new PriorityQueue<>(compareByPrice);
 		this.transactions = new ArrayList<>();
