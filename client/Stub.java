@@ -5,6 +5,8 @@ import org.zeromq.ZMQ;
 import java.lang.*;
 import java.io.*;
 import java.net.*;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import client.Protocol.*;
 
@@ -230,7 +232,6 @@ public class Stub extends Thread {
 		os.write(result);
 	}
 
-	private void nop() {}
 
 	private void listCompanies() throws Exception {
 		String path = "http://localhost:8080/companies";
@@ -248,8 +249,13 @@ public class Stub extends Thread {
 			reply.append(inputLine);
 		}
 		in.close();
+		JSONArray jsonCompanies = new JSONArray(reply.toString());
 
-		System.out.println(reply.toString());
+		for (int i = 0; i < jsonCompanies.length(); i++) {
+			JSONObject object = jsonCompanies.getJSONObject(i);
+			String company = object.toString();
+			System.out.println(" " + company);
+		}
 	}
 
 	private void companyInfo() throws Exception {
@@ -270,9 +276,22 @@ public class Stub extends Thread {
 			reply.append(inputLine);
 		}
 		in.close();
-
-		System.out.println(reply.toString());
+		JSONObject c_info = new JSONObject(reply.toString());
+		System.out.println("Company name: " + c_info.getString("name"));
+		System.out.println("Exchange: " + c_info.getJSONObject("exchange").getString("name"));
+		System.out.println("Yesterday:");
+		System.out.println(" minimum: " + c_info.getJSONObject("yesterday").getString("minimum"));
+		System.out.println(" maximum: " + c_info.getJSONObject("yesterday").getString("maximum"));
+		System.out.println(" open: " + c_info.getJSONObject("yesterday").getString("open"));
+		System.out.println(" close: " + c_info.getJSONObject("yesterday").getString("close"));
+		System.out.println("Today:");
+		System.out.println(" minimum: " + c_info.getJSONObject("today").getString("minimum"));
+		System.out.println(" maximum: " + c_info.getJSONObject("today").getString("maximum"));
+		System.out.println(" open: " + c_info.getJSONObject("today").getString("open"));
 	}
+
+	private void nop() {}
+
 
 	private void setUpMenus() {
 		initialMenu = new String[2];
