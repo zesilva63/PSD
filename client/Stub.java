@@ -249,13 +249,15 @@ public class Stub extends Thread {
 			reply.append(inputLine);
 		}
 		in.close();
+		/*
 		JSONArray jsonCompanies = new JSONArray(reply.toString());
-
 		for (int i = 0; i < jsonCompanies.length(); i++) {
 			JSONObject object = jsonCompanies.getJSONObject(i);
 			String company = object.toString();
 			System.out.println(" " + company);
 		}
+		*/
+		System.out.println(reply.toString());
 	}
 
 	private void companyInfo() throws Exception {
@@ -276,6 +278,8 @@ public class Stub extends Thread {
 			reply.append(inputLine);
 		}
 		in.close();
+		System.out.println(reply.toString());
+			/*
 		JSONObject c_info = new JSONObject(reply.toString());
 		System.out.println("Company name: " + c_info.getString("name"));
 		System.out.println("Exchange: " + c_info.getJSONObject("exchange").getString("name"));
@@ -288,6 +292,7 @@ public class Stub extends Thread {
 		System.out.println(" minimum: " + c_info.getJSONObject("today").getDouble("minimum"));
 		System.out.println(" maximum: " + c_info.getJSONObject("today").getDouble("maximum"));
 		System.out.println(" open: " + c_info.getJSONObject("today").getDouble("open"));
+	*/
 	}
 
 	private void nop() {}
