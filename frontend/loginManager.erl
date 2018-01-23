@@ -66,13 +66,10 @@ loginManager(Map) ->
 		{user_pid, User, From} ->
 			case maps:find(User, Map) of
 				{ok, {_, false}} ->
-					io:format("User ~p is not online\n", [User]),
 					From ! {?MODULE, disconnected};
 				{ok, {_, Pid}} ->
-					io:format("User ~p found!\n", [User]),
 					From ! {?MODULE, {ok, Pid}};
 				_ ->
-					io:format("User ~p not found in ~p!\n", [User, Map]),
 					From ! {?MODULE, error}
 			end,
 			loginManager(Map)

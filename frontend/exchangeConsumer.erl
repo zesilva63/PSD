@@ -4,7 +4,6 @@
 run(Host, Port) -> 
 	{ok, Context} = erlzmq:context(),
 	{ok, Sock} = erlzmq:socket(Context, [pull, {active, false}]),
-	ok = erlzmq:connect(Sock, "tcp://" ++ Host ++ ":" ++ integer_to_list(Port)),
 	register(?MODULE, spawn ( fun() -> exchangeConsumer(Sock) end) ).
 
 exchangeConsumer(Sock) ->
