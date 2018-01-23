@@ -22,5 +22,5 @@ public class Notificator extends Thread {
             client.addNotification(msg);
         }
     }
-    
+
 }

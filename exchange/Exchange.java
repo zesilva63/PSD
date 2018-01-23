@@ -32,6 +32,7 @@ public class Exchange {
 		MessageCreator creator = new MessageCreator();
 		List<Transaction> transactions;
 
+		String pub_msg;
 
 		while (true) {
 
@@ -52,12 +53,14 @@ public class Exchange {
 					} catch (Exception e) {
 						System.out.println("Error sending data to Directory");
 					}
-					// enviar a cada um dos envolvidos
+
 					Message mSeller = creator.createSellerResponse(t);
 					Message mBuyer = creator.createBuyerResponse(t);
 
 					push.send(mSeller.toByteArray());
 					push.send(mBuyer.toByteArray());
+					pub_msg = t.getCompany() + ": " t.getQuantity() + " units of stock shares traded for " + t.getPrice();
+					pub.send(pub_msg);
 				}
 			}
 		}
