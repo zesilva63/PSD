@@ -5,7 +5,7 @@ import java.net.Socket;
 
 
 public class Client {
-	private static final int port = 6363;
+	private static final int port = 7000;
 
 	public static void main(String[] args) throws Exception, IOException {
 		Socket cli = new Socket(args[0], port);
