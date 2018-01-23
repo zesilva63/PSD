@@ -1,3 +1,12 @@
+DIRECTORY_PATH=stock-directory
+DIRECTORY_MVN_OPTIONS=-f $(DIRECTORY_PATH)/pom.xml
+
+build: stock-directory client frontend exchange
+
+stock-directory:
+	mvn $(DIRECTORY_MVN_OPTIONS) compile
+	mvn $(DIRECTORY_MVN_OPTIONS) package
+
 client:
 	protoc --java_out=. protos/protocol.proto
 	javac -cp dependencies/jar/protobuf-java-3.4.1.jar client/*.java
@@ -12,16 +21,19 @@ exchange:
 	protoc --java_out=. protos/protocol.proto
 	javac -cp dependencies/jar/protobuf-java-3.4.1.jar:dependencies/jar/jeromq-0.4.3.jar:dependencies/jar/gson-2.6.2.jar exchange/*.java
 
-
 runcli:
 	java -cp .:dependencies/jar/protobuf-java-3.4.1.jar:dependencies/jar/jeromq-0.4.3.jar:. client.Client localhost
 
 run-exchange:
 	java -cp dependencies/jar/protobuf-java-3.4.1.jar:dependencies/jar/jeromq-0.4.3.jar:dependencies/jar/gson-2.6.2.jar. exchange.Exchange
 
+.PHONY: stock-directory exchange frontend client 
+
 clean:
-	rm client/*.class
-	rm frontend/*.beam
-	rm frontend/protocol.erl
-	rm client/Protocol.java
+	-@rm client/*.class
+	-@rm frontend/*.beam
+	-@rm frontend/protocol.erl
+	-@rm client/Protocol.java
+	-@rm exchange/Protocol.java
+	-@mvn $(DIRECTORY_MVN_OPTIONS) clean
 	rm exchange/*.class
