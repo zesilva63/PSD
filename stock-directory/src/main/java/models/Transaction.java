@@ -6,10 +6,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Transaction {
     private final String company;
     private final int quantity;
-    private final int price;
+    private final float price;
 
     @JsonCreator
-    public Transaction(@JsonProperty("company") String company, @JsonProperty("quantity") int quantity, @JsonProperty("price") int price) {
+    public Transaction(@JsonProperty("company") String company, @JsonProperty("quantity") int quantity, @JsonProperty("price") float price) {
         this.company = company;
         this.quantity = quantity;
         this.price = price;
@@ -23,7 +23,7 @@ public class Transaction {
         return quantity;
     }
 
-    public int getPrice() {
+    public float getPrice() {
         return price;
     }
 }
