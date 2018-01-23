@@ -3,6 +3,7 @@ package client;
 import java.net.Socket;
 import java.io.InputStream;
 import java.io.IOException;
+import org.zeromq.ZMQ;
 
 import client.*;
 import client.Protocol.*;
@@ -29,7 +30,7 @@ public class Reader extends Thread {
 				content = readResponse(m);
 			}
 			else {
-				content = readNotification(m);
+				content = readTransaction(m);
 			}
 			giveMessage(header, content);
 		}
@@ -44,10 +45,10 @@ public class Reader extends Thread {
 		else if (header.equals("OK"))
 			client.setReply(true, content);
 		else
-			client.addNotification(content);
+			client.addTransaction(content);
 	}
 
-	private String readNotification(Message m) {
+	private String readTransaction(Message m) {
 		String response;
 		String comp = m.getOrder().getCompany();
 		int quant = m.getOrder().getQuantity();
@@ -77,12 +78,11 @@ public class Reader extends Thread {
 
 	private Message readMessage() {
 		Message m = null;
-		System.out.println("HELLO");
-		try {	
+		try {
 			byte[] msg = recvMsg(is);
 			m = Message.parseFrom(msg);
 		} catch(Exception e) {
-			System.out.println("erro");
+			System.out.println("Erro ao ler mensagem.");
 		}
 		return m;
 	}

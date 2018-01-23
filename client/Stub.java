@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.NoSuchElementException;
+import org.zeromq.ZMQ;
 
 import client.Protocol.*;
 
@@ -18,18 +19,21 @@ public class Stub extends Thread {
 	
 	private InputStream is;
     private OutputStream os;
-	
+
+    private ZMQ.Socket sub;
+
 	private Menu menu;
 	private String[] initialMenu;
 	private String[] sessionMenu;
 	
 	private String username;
 
-	Stub(Socket cliSocket, ClientInfo client) throws IOException {
+	Stub(Socket cliSocket, ClientInfo client, ZMQ.Socket sub) throws IOException {
 		this.cliSocket = cliSocket;
 		this.client = client;
 		this.is = cliSocket.getInputStream();
 		this.os = cliSocket.getOutputStream();
+		this.sub = sub;
 		out = new PrintWriter(os, true);
 		menu = new Menu();
 		setUpMenus();
@@ -59,6 +63,7 @@ public class Stub extends Thread {
 				option = menu.show(initialMenu);
 			else {
 				sessionMenu[0] = "1) Read notifications " + "(" + client.getNumberOfNotifications() + ")";
+				sessionMenu[1] = "2) Check " + "(" + client.getNumberOfTransactions() + ") transactions" ;
 				option = menu.show(sessionMenu) + 2;
 			}
 		} catch (NoSuchElementException e) {
@@ -76,14 +81,17 @@ public class Stub extends Thread {
 					break;
 			case 3: readNotifications();
 					break;
-			case 4: subscribeCompany();
+			case 4: readTransactions();
 					break;
-			case 5: sell();
+			case 5: subscribeCompany();
 					break;
-			case 6: buy();
+			case 6: unsubscribeCompany();
 					break;
-			case 7: closeAuction();
+			case 7: sell();
 					break;
+			case 8: buy();
+					break;
+
 		}
 	}
 
@@ -162,15 +170,31 @@ public class Stub extends Thread {
 		menu.printResponse(notifications);
 	}
 
+	private void readTransactions() {
+		int amountTransactions;
+		String transactions;
+
+		synchronized (client) {
+			amountTransactions = client.getNumberOfTransactions();
+			transactions = client.getTransactions();
+		}
+
+		if (amountTransactions == 0)
+			transactions = "> Still no transactions happened!\n";
+
+		menu.printResponse(transactions);
+	}
+
 	private void subscribeCompany() {
 		String company = menu.readString("Company to subscribe: ");
-		Message req = Message.newBuilder().setType("SUBSCRIBE").setDest(comp).build();
-		
-		byte[] result = m.toByteArray();
-		os.write(result);
+		sub.subscribe(company.getBytes());
+		System.out.println("Transactions from " + company + " subscribed.\n");
+	}
 
-		String response = client.getResponse();
-		menu.printResponse(response);
+	private void unsubscribeCompany() {
+		String company = menu.readString("Company to subscribe: ");
+		sub.unsubscribe(company.getBytes());
+		System.out.println("Transactions from " + company + " unsubscribed.\n");
 	}
 
 	private void sell() throws IOException {
@@ -184,10 +208,6 @@ public class Stub extends Thread {
 		byte[] result = m.toByteArray();
 
 		os.write(result);
-		
-		String response = client.getResponse();
-
-		menu.printResponse(response);
 	}
 
 	private void buy() throws IOException {
@@ -201,10 +221,6 @@ public class Stub extends Thread {
 		
 		byte[] result = m.toByteArray();
 		os.write(result);
-		
-		String response = client.getResponse();
-
-		menu.printResponse(response);
 	}
 
 	private void closeAuction() {
@@ -219,14 +235,14 @@ public class Stub extends Thread {
 
 	private void setUpMenus() {
 		initialMenu = new String[2];
-		sessionMenu = new String[5];
+		sessionMenu = new String[6];
 
 		initialMenu[0] = "1) Register";
 		initialMenu[1] = "2) Login";
 
-		sessionMenu[1] = "2) Subscribe company";
-		sessionMenu[2] = "3) Sell shares";
-		sessionMenu[3] = "4) Buy shares";
-		sessionMenu[4] = "5) Terminar leilão";
+		sessionMenu[2] = "3) Subscribe company";
+		sessionMenu[3] = "4) Unsubscribe company";
+		sessionMenu[4] = "5) Sell shares";
+		sessionMenu[5] = "6) Buy shares";
 	}
 }

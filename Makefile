@@ -22,6 +22,10 @@ exchange:
 	protoc --java_out=. protos/protocol2.proto
 	javac -cp dependencies/jar/protobuf-java-3.4.1.jar:dependencies/jar/jeromq-0.4.3.jar:dependencies/jar/gson-2.6.2.jar exchange/*.java
 
+pub-broker:
+	javac -cp dependencies/jar/jeromq-0.4.3.jar exchange/PubSubBroker.java
+
+
 # 7000 -> frontend (mudar consoante cliente) | 4442 XPUB
 runcli:
 	java -cp .:dependencies/jar/protobuf-java-3.4.1.jar:dependencies/jar/jeromq-0.4.3.jar:. client.Client localhost 7000 4442
@@ -29,6 +33,10 @@ runcli:
 # 3331 -> push para broker | 5000 pull do ator (mudar consoante exchange) | XSUB 4441
 run-exchange:
 	java -cp .:dependencies/jar/protobuf-java-3.4.1.jar:dependencies/jar/jeromq-0.4.3.jar:dependencies/jar/gson-2.6.2.jar exchange.Exchange 3331 5000 4441
+
+run-pub-broker:
+	java -cp .:dependencies/jar/jeromq-0.4.3.jar exchange.PubSubBroker 4441 4442
+
 
 run-stock-directody:
 	java -jar stock-directory/target/stockdirectory-$(DIRECTORY_VERSION).jar server stock-directory/conf.yml

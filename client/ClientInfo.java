@@ -9,6 +9,7 @@ public class ClientInfo {
 	private boolean success;
 	private String content;
 	private ArrayDeque<String> notifications;
+	private ArrayDeque<String> transactions;
 
 	ClientInfo() {
 		command = -1;
@@ -17,6 +18,7 @@ public class ClientInfo {
 		success = false;
 		content = null;
 		notifications = new ArrayDeque<>();
+		transactions = new ArrayDeque<>();
 	}
 
 	synchronized public int getCommand() {
@@ -45,6 +47,10 @@ public class ClientInfo {
 
 	synchronized public void addNotification(String message) {
 		notifications.addLast(message);
+	}
+
+	synchronized public void addTransaction(String message) {
+		transactions.addLast(message);
 	}
 
 	synchronized public boolean getReplyStatus() {
@@ -78,7 +84,25 @@ public class ClientInfo {
 		return sb.toString();
 	}
 
+	synchronized public String getTransactions() {
+		String msg;
+		StringBuilder sb = new StringBuilder();
+
+		while((msg = transactions.pollFirst()) != null)
+			sb.append(msg).append("\n");
+
+		if (sb.length() > 0)
+			sb.deleteCharAt(sb.length() - 1);
+
+		return sb.toString();
+	}
+
 	synchronized public int getNumberOfNotifications() {
 		return notifications.size();
 	}
+
+	synchronized public int getNumberOfTransactions() {
+		return transactions.size();
+	}
+
 }

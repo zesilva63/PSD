@@ -25,7 +25,7 @@ public class Exchange {
 		pull.connect("tcp://localhost:" + args[1]);
 
 		ZMQ.Socket pub = context.socket(ZMQ.PUB);
-		pull.connect("tcp://localhost:" + args[2]);
+		pub.connect("tcp://localhost:" + args[2]);
 
 		Exchange exchange = new Exchange(push, pull, pub);
 		DirectoryManager directory = new DirectoryManager();

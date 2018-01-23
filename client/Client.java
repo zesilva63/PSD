@@ -18,9 +18,11 @@ public class Client {
 		Socket cli = new Socket(args[0], front_port);
 		ClientInfo info = new ClientInfo();
 		Reader reader = new Reader(cli, info);
-		Stub stub = new Stub(cli, info);
+		Notificator notifier = new Notificator(info, sub);
+		Stub stub = new Stub(cli, info, sub);
 
 		reader.start();
 		stub.start();
+		notifier.start();
 	}
 }
