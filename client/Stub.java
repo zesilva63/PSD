@@ -280,14 +280,14 @@ public class Stub extends Thread {
 		System.out.println("Company name: " + c_info.getString("name"));
 		System.out.println("Exchange: " + c_info.getJSONObject("exchange").getString("name"));
 		System.out.println("Yesterday:");
-		System.out.println(" minimum: " + c_info.getJSONObject("yesterday").getString("minimum"));
-		System.out.println(" maximum: " + c_info.getJSONObject("yesterday").getString("maximum"));
-		System.out.println(" open: " + c_info.getJSONObject("yesterday").getString("open"));
-		System.out.println(" close: " + c_info.getJSONObject("yesterday").getString("close"));
+		System.out.println(" minimum: " + c_info.getJSONObject("yesterday").getFloat("minimum"));
+		System.out.println(" maximum: " + c_info.getJSONObject("yesterday").getFloat("maximum"));
+		System.out.println(" open: " + c_info.getJSONObject("yesterday").getFloat("open"));
+		System.out.println(" close: " + c_info.getJSONObject("yesterday").getFloat("close"));
 		System.out.println("Today:");
-		System.out.println(" minimum: " + c_info.getJSONObject("today").getString("minimum"));
-		System.out.println(" maximum: " + c_info.getJSONObject("today").getString("maximum"));
-		System.out.println(" open: " + c_info.getJSONObject("today").getString("open"));
+		System.out.println(" minimum: " + c_info.getJSONObject("today").getFloat("minimum"));
+		System.out.println(" maximum: " + c_info.getJSONObject("today").getFloat("maximum"));
+		System.out.println(" open: " + c_info.getJSONObject("today").getFloat("open"));
 	}
 
 	private void nop() {}
