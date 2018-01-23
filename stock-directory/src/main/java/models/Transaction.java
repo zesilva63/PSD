@@ -1,13 +1,15 @@
 package models;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Transaction {
-    private String company;
-    private int quantity, price;
+    private final String company;
+    private final int quantity;
+    private final int price;
 
     @JsonCreator
-    public Transaction(String company, int quantity, int price) {
+    public Transaction(@JsonProperty("company") String company, @JsonProperty("quantity") int quantity, @JsonProperty("price") int price) {
         this.company = company;
         this.quantity = quantity;
         this.price = price;
