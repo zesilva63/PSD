@@ -1,5 +1,4 @@
 package exchange;
-
 import exchange.Protocol.*;
 
 public class MessageCreator {
