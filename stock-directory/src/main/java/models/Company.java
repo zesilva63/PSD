@@ -14,7 +14,7 @@ public class Company {
     public Company(String name, Exchange exchange) {
         this.name = name;
 
-        Optional<Integer> initialValue = generateInitialStocks();
+        Optional<Float> initialValue = generateInitialStocks();
         yesterday = new Stock(initialValue);
         yesterday.close();
         today = yesterday.open();
@@ -57,11 +57,11 @@ public class Company {
         today = yesterday.open();
     }
 
-    private Optional<Integer> generateInitialStocks() {
+    private Optional<Float> generateInitialStocks() {
         Random r = new Random();
-        int value = r.nextInt(10);
+        float value = Math.round(r.nextFloat()*10);
 
-        if (value == 0)
+        if (value < 1)
             Optional.absent();
 
         return Optional.of(value);

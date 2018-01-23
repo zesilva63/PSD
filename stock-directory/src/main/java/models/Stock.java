@@ -7,12 +7,12 @@ import com.google.common.base.Optional;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Stock {
-    private Optional<Integer> minimum, maximum, open, close;
+    private Optional<Float> minimum, maximum, open, close;
 
     @JsonIgnore
-    private Optional<Integer> current;
+    private Optional<Float> current;
 
-    public Stock(Optional<Integer> initial) {
+    public Stock(Optional<Float> initial) {
         open = initial;
         minimum = initial;
         maximum = initial;
@@ -21,29 +21,29 @@ public class Stock {
         close = Optional.absent();
     }
 
-    public Integer getMinimum() {
+    public Float getMinimum() {
         return minimum.orNull();
     }
 
-    public Integer getMaximum() {
+    public Float getMaximum() {
         return maximum.orNull();
     }
 
-    public Integer getOpen() {
+    public Float getOpen() {
         return open.orNull();
     }
 
-    public Integer getClose() {
+    public Float getClose() {
         return close.orNull();
     }
 
     public void apply(Transaction tr) {
-        int price = tr.getPrice();
+        float price = tr.getPrice();
 
-        if (tr.getPrice() > maximum.or(Integer.MIN_VALUE))
+        if (tr.getPrice() > maximum.or(Float.MIN_VALUE))
             maximum = Optional.of(price);
 
-        if (tr.getPrice() < minimum.or(Integer.MAX_VALUE))
+        if (tr.getPrice() < minimum.or(Float.MAX_VALUE))
             minimum = Optional.of(price);
 
         current = Optional.of(price);
