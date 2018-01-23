@@ -60,8 +60,10 @@ public class Company {
 				}
 
 			} else {
-				sellOrders.add(sellOrder);
-				buyOrders.add(buyOrder);
+				if (sellOrder != null) 
+					sellOrders.add(sellOrder);
+				if (buyOrder != null)
+					buyOrders.add(buyOrder);
 				repeat = false;
 			}
 		}

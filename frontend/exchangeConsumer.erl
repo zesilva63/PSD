@@ -10,11 +10,11 @@ run(Host, Port) ->
 exchangeConsumer(Sock) ->
 	case erlzmq:recv(Sock) of
 		{ok, Bin} ->
-			Msg = protocol:decode_msg(Bin, "Message"),
-			Cli = maps:get(user, Msg),
-			User = maps:get(username, Cli),
+			Msg = protocol:decode_msg(Bin, 'Message'),
+			io:format("Incoming message: ~p\n", [Msg]),
+			User = maps:get(dest, Msg),
 			{ok, Pid} = loginManager:user_pid(User),
-			userSession:send(Msg, User),
+			userSession:send(Msg, Pid),
 			exchangeConsumer(Sock);
 		{error, _} -> 
 			exchangeConsumer(Sock)

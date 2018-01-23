@@ -1,5 +1,5 @@
 -module(loginManager).
--export([run/0, create_account/2, close_account/2, login/2, logout/1]).
+-export([run/0, create_account/2, close_account/2, login/2, logout/1, user_pid/1]).
 
 run() -> 
 	register(?MODULE, spawn ( fun() -> loginManager(#{}) end) ).
@@ -31,6 +31,7 @@ loginManager(Map) ->
       		case maps:find(User, Map) of
         		error ->
           			From ! {?MODULE, created},
+					io:format("New user ~p\n", [User]),
           			loginManager(maps:put(User, {Pass, false}, Map));
         		_ -> 
           			From ! {?MODULE, user_exists},
@@ -63,14 +64,18 @@ loginManager(Map) ->
       		loginManager(maps:update(User, {Pass, false}, Map));
 
 		{user_pid, User, From} ->
-			case maps:get(User, Map) of
+			case maps:find(User, Map) of
 				{ok, {_, false}} ->
+					io:format("User ~p is not online\n", [User]),
 					From ! {?MODULE, disconnected};
 				{ok, {_, Pid}} ->
+					io:format("User ~p found!\n", [User]),
 					From ! {?MODULE, {ok, Pid}};
 				_ ->
+					io:format("User ~p not found in ~p!\n", [User, Map]),
 					From ! {?MODULE, error}
-			end
+			end,
+			loginManager(Map)
     end.
 
 receiveReply() ->

@@ -12,14 +12,16 @@ public class Client {
 		int sub_port = Integer.parseInt(args[2]);
 		
 		ZMQ.Context context = ZMQ.context(1);
-		ZMQ.Socket sub = context.socket(ZMQ.PUB);
-		sub.connect("tcp://localhost:" + sub_port);
+		ZMQ.Socket sub = context.socket(ZMQ.SUB);
+		sub.connect("tcp://localhost:" + args[2]);
+		String s = "";
+		sub.subscribe(s);
 
 		Socket cli = new Socket(args[0], front_port);
 		ClientInfo info = new ClientInfo();
 		Reader reader = new Reader(cli, info);
-		Notificator notifier = new Notificator(info, sub);
 		Stub stub = new Stub(cli, info, sub);
+		Notificator notifier = new Notificator(info, sub);
 
 		reader.start();
 		stub.start();

@@ -2,6 +2,7 @@
 -export([run/0, lookup_exchange/1]).
 
 run() -> 
+	exchangeConsumer:run("localhost", 3332),
 	register(?MODULE, spawn ( fun() -> exchangeManager(#{}, #{}) end) ).
 
 lookup_exchange(Company) ->
@@ -16,6 +17,7 @@ lookup_exchange(Company) ->
 exchangeManager(Exchanges, Cache) ->
 	receive
 		{lookup, Company, From} ->
+			io:format("looking for ~p\n", [Company]),
 			case maps:find(Company, Cache) of
 				error -> 
 					EInfo = ask_directory(Company),
@@ -28,11 +30,13 @@ exchangeManager(Exchanges, Cache) ->
 							Host = maps:get(host, EInfo),
 							Port = maps:get(port, EInfo),
 							Pid = exchangeProducer:run(Host, Port),
+							io:format("Creating producer for ~p:~p\n", [Host, Port]),
 							From ! {ok, Pid}
 					end;
 				{ok, Pid} ->
 					From ! {ok, Pid}
-			end
+			end,
+			exchangeManager(Exchanges, Cache)
 	end.
 
 % Returns a Map with the exchange info

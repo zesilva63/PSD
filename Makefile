@@ -26,6 +26,9 @@ exchange:
 pub-broker:
 	javac -cp dependencies/jar/jeromq-0.4.3.jar exchange/PubSubBroker.java
 
+push-broker:
+	javac -cp dependencies/jar/jeromq-0.4.3.jar exchange/Broker.java
+
 
 # 7000 -> frontend (mudar consoante cliente) | 4442 XPUB
 runcli:
@@ -37,6 +40,9 @@ run-exchange:
 
 run-pub-broker:
 	java -cp .:dependencies/jar/jeromq-0.4.3.jar exchange.PubSubBroker 4441 4442
+
+push-pull-broker:
+	java -cp .:dependencies/jar/jeromq-0.4.3.jar exchange.Broker 3331 3332 
 
 
 run-stock-directody:

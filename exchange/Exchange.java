@@ -22,7 +22,7 @@ public class Exchange {
 		push.connect("tcp://localhost:" + args[0]);
 
 		ZMQ.Socket pull = context.socket(ZMQ.PULL);
-		pull.connect("tcp://localhost:" + args[1]);
+		pull.bind("tcp://*:" + args[1]);
 
 		ZMQ.Socket pub = context.socket(ZMQ.PUB);
 		pub.connect("tcp://localhost:" + args[2]);
@@ -37,7 +37,7 @@ public class Exchange {
 		while (true) {
 
 			Message msg = exchange.recvMessage();
-
+	System.out.println("GOTIT");
 			Order order = exchange.createOrder(msg);
 			String company = msg.getOrder().getCompany();
 
@@ -46,6 +46,7 @@ public class Exchange {
 			else
 				transactions = exchange.addBuyOrder(company, order);
 
+	System.out.println("Devolvi matches " + transactions.size());
 			for (Transaction t : transactions) {
 				if(t != null) {
 					try {
@@ -59,7 +60,7 @@ public class Exchange {
 
 					push.send(mSeller.toByteArray());
 					push.send(mBuyer.toByteArray());
-					pub_msg = t.getCompany() + ": " t.getQuantity() + " units of stock shares traded for " + t.getPrice();
+					pub_msg = t.getCompany() + ": " +  Integer.toString(t.getQuantity()) + " units of stock shares traded for " + Float.toString(t.getPrice());
 					pub.send(pub_msg);
 				}
 			}

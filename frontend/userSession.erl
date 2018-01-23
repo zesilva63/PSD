@@ -11,6 +11,7 @@ run(Sock, User) ->
 			Order = maps:get(order, Msg),
 			Company = maps:get(company, Order),
 			{ok, Pid} = exchangeManager:lookup_exchange(Company),
+			io:format("Message = ~p\n", [Msg]),
 			ok = exchangeProducer:new_order(Bin, Pid),
 			run(Sock, User);
 		{transaction, Bin} ->

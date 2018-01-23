@@ -91,12 +91,13 @@ public class Stub extends Thread {
 					break;
 			case 8: buy();
 					break;
-
+			case 9: nop();
+					break;
 		}
 	}
 
 	private static byte[] recvMsg(InputStream inpustream) {
-    try {
+    	try {
             byte len[] = new byte[4096];
             int count = inpustream.read(len); 
             byte[] temp = new byte[count];
@@ -108,7 +109,11 @@ public class Stub extends Thread {
             System.out.println("recvMsg() occur exception!" + e.toString());
         }
         return null;
-}
+	}
+
+	private void nop() {
+	
+	}
 
 	private void signup() throws IOException {
 		String username = menu.readString("Username: ");
@@ -238,7 +243,7 @@ public class Stub extends Thread {
 
 	private void setUpMenus() {
 		initialMenu = new String[2];
-		sessionMenu = new String[6];
+		sessionMenu = new String[7];
 
 		initialMenu[0] = "1) Register";
 		initialMenu[1] = "2) Login";
@@ -247,5 +252,6 @@ public class Stub extends Thread {
 		sessionMenu[3] = "4) Unsubscribe company";
 		sessionMenu[4] = "5) Sell shares";
 		sessionMenu[5] = "6) Buy shares";
+		sessionMenu[6] = "7) Nop";
 	}
 }
